@@ -1,0 +1,33 @@
+{
+  "name": "request-image-size",
+  "version": "1.0.0",
+  "description": "Detect image dimensions via request.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FdezRomero/request-image-size.git"
+  },
+  "keywords": [
+    "image",
+    "size",
+    "dimensions",
+    "request",
+    "http",
+    "https",
+    "network"
+  ],
+  "author": "Rodrigo Fernández Romero",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FdezRomero/request-image-size/issues"
+  },
+  "homepage": "https://github.com/FdezRomero/request-image-size",
+  "dependencies": {
+    "request": "^2.38.0",
+    "image-size": "^0.3.0"
+  },
+  "devDependencies": {
+    "mocha": "^1",
+    "require-main": "^0.1.0"
+  }
+}
