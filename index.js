@@ -14,6 +14,7 @@
 
 var request = require('request');
 var sizeOf = require('image-size');
+var util = require('util');
 
 module.exports = function(options, done) {
 
