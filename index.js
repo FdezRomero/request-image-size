@@ -41,6 +41,7 @@ module.exports = function(options, done) {
       } catch(e) {}
     })
     .on('error', function(err) {
+      req.abort();
       done(err);
     })
     .on('end', function() {
