@@ -28,24 +28,35 @@ module.exports = function(options, done) {
   } else {
     throw new Error('You should provide an URI or a "request" options object.');
   }
-  
-  var buffer = new Buffer([]);
-  var dimensions;
 
-  var req = request(opts)
+  var req = request(opts).on('response', function(response) {
+  
+    var buffer = new Buffer([]);
+    var dimensions;
+    var imageTypeDetectionError;
+
+    response
     .on('data', function(chunk) {
       buffer = Buffer.concat([buffer, chunk]);
       try {
         dimensions = sizeOf(buffer);
-        req.abort();
-      } catch(e) {}
+      } catch (e) {
+        imageTypeDetectionError = e;
+        return;
+      }
+      req.abort();
     })
     .on('error', function(err) {
-      req.abort();
       done(err);
     })
     .on('end', function() {
+      if (!dimensions) {
+        done(imageTypeDetectionError);
+        return;
+      }
       done(null, dimensions, buffer.length);
     });
+
+  });
   
 };
