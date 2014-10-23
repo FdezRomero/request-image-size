@@ -29,7 +29,9 @@ module.exports = function(options, done) {
     throw new Error('You should provide an URI or a "request" options object.');
   }
 
-  var req = request(opts).on('response', function(response) {
+  var req = request(opts);
+
+  req.on('response', function(response) {
   
     var buffer = new Buffer([]);
     var dimensions;
@@ -57,6 +59,10 @@ module.exports = function(options, done) {
       done(null, dimensions, buffer.length);
     });
 
+  });
+
+  req.on('error', function(err) {
+    done(err);
   });
   
 };
