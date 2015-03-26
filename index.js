@@ -4,8 +4,8 @@
  * Licensed under the MIT license.
  *
  * https://github.com/FdezRomero/request-image-size
- * © 2014 Rodrigo Fernández Romero
- * 
+ * © 2015 Rodrigo Fernández Romero
+ *
  * Based on the work of Johannes J. Schmidt
  * https://github.com/jo/http-image-size
  */
@@ -32,7 +32,7 @@ module.exports = function(options, done) {
   var req = request(opts);
 
   req.on('response', function(response) {
-  
+
     var buffer = new Buffer([]);
     var dimensions;
     var imageTypeDetectionError;
@@ -49,20 +49,18 @@ module.exports = function(options, done) {
       req.abort();
     })
     .on('error', function(err) {
-      done(err);
+      return done(err);
     })
     .on('end', function() {
       if (!dimensions) {
-        done(imageTypeDetectionError);
-        return;
+        return done(imageTypeDetectionError);
       }
-      done(null, dimensions, buffer.length);
+      return done(null, dimensions, buffer.length);
     });
 
   });
 
-  req.on('error', function(err) {
-    done(err);
-  });
-  
+  // Prevent maxRedirects exceptions from being thrown
+  req.on('error', function(err) {});
+
 };
