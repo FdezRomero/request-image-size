@@ -61,6 +61,6 @@ module.exports = function(options, done) {
   });
 
   // Prevent maxRedirects exceptions from being thrown
-  req.on('error', function(err) {});
+  req.on('error', function(err) { return done(err); }); 
 
 };
