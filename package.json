@@ -1,6 +1,6 @@
 {
   "name": "request-image-size",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Detect image dimensions via request.",
   "main": "index.js",
   "repository": {
