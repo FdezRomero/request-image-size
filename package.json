@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/FdezRomero/request-image-size",
   "dependencies": {
-    "image-size": "^0.3.5",
+    "image-size": "^0.5.1",
     "request": "^2.54.0"
   }
 }
