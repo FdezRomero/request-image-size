@@ -4,7 +4,7 @@
  * Licensed under the MIT license.
  *
  * https://github.com/FdezRomero/request-image-size
- * © 2015 Rodrigo Fernández Romero
+ * © 2017 Rodrigo Fernández Romero
  *
  * Based on the work of Johannes J. Schmidt
  * https://github.com/jo/http-image-size
@@ -13,12 +13,20 @@
 'use strict';
 
 var request = require('request');
-var sizeOf = require('image-size');
+var imageSize = require('image-size');
 var util = require('util');
 
-module.exports = function(options, done) {
+module.exports = function requestImageSize(options, callback) {
 
+  var callbackCalled = false;
   var opts;
+
+  function done(err, size, downloaded) {
+    if (!callbackCalled) {
+      callbackCalled = true;
+      return callback(err, size, downloaded);
+    }
+  }
 
   if (options && typeof options === 'object') {
     opts = util._extend({}, options);
@@ -26,42 +34,52 @@ module.exports = function(options, done) {
   } else if (options && typeof options === 'string') {
     opts = { uri: options };
   } else {
-    throw new Error('You should provide an URI or a "request" options object.');
+    return done(new Error('You should provide an URI or a "request" options object.'));
   }
 
   var req = request(opts);
 
-  req.on('response', function(response) {
+  req.on('response', function(res) {
 
     var buffer = new Buffer([]);
-    var dimensions;
-    var imageTypeDetectionError;
+    var size;
+    var imageSizeError;
 
-    response
-    .on('data', function(chunk) {
-      buffer = Buffer.concat([buffer, chunk]);
+    res.on('data', function(chunk) {
+
+      buffer = Buffer.concat([ buffer, chunk ]);
+
       try {
-        dimensions = sizeOf(buffer);
-      } catch (e) {
-        imageTypeDetectionError = e;
+        size = imageSize(buffer);
+      } catch (err) {
+        imageSizeError = err;
         return;
       }
-      req.abort();
-    })
-    .on('error', function(err) {
-      return done(err);
-    })
-    .on('end', function() {
-      if (!dimensions) {
-        return done(imageTypeDetectionError);
+
+      if (size) {
+        return req.abort();
       }
-      return done(null, dimensions, buffer.length);
+
+    });
+
+    res.on('error', function(err) {
+      return done(err);
+    });
+
+    res.on('end', function() {
+
+      if (!size) {
+        return done(imageSizeError);
+      }
+
+      return done(null, size, buffer.length);
+
     });
 
   });
 
-  // Prevent maxRedirects exceptions from being thrown
-  // Callback was already called in 'return done(imageTypeDetectionError)'
-  req.on('error', function(err) {});
+  req.on('error', function(err) {
+    return done(err);
+  });
 
 };
