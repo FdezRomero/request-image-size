@@ -6,7 +6,7 @@ This NodeJS module is an extension of [http-image-size](https://github.com/jo/ht
 
 ## Basic usage
 ```js
-var size = require('request-image-size');
+var requestImageSize = require('request-image-size');
 
 requestImageSize('http://nodejs.org/images/logo.png', function(err, size, downloaded) {
 
