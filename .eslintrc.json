@@ -1,0 +1,10 @@
+{
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "extends": ["savelist"],
+  "rules": {
+    "no-underscore-dangle": ["off"]
+  }
+}
