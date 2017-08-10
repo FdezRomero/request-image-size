@@ -1,6 +1,5 @@
 /**
  * request-image-size: Detect image dimensions via request.
- *
  * Licensed under the MIT license.
  *
  * https://github.com/FdezRomero/request-image-size
@@ -10,76 +9,59 @@
  * https://github.com/jo/http-image-size
  */
 
-'use strict';
+const request = require('request');
+const imageSize = require('image-size');
 
-var request = require('request');
-var imageSize = require('image-size');
-var util = require('util');
-
-module.exports = function requestImageSize(options, callback) {
-
-  var callbackCalled = false;
-  var opts;
-
-  function done(err, size, downloaded) {
-    if (!callbackCalled) {
-      callbackCalled = true;
-      return callback(err, size, downloaded);
-    }
-  }
+module.exports = function requestImageSize(options) {
+  let opts = {
+    encoding: null
+  };
 
   if (options && typeof options === 'object') {
-    opts = util._extend({}, options);
-    opts.encoding = null;
+    opts = Object.assign(options, opts);
   } else if (options && typeof options === 'string') {
-    opts = { uri: options };
+    opts = Object.assign({ uri: options }, opts);
   } else {
-    return done(new Error('You should provide an URI or a "request" options object.'));
+    return Promise.reject(new Error('You should provide an URI string or a "request" options object.'));
   }
 
-  var req = request(opts);
+  opts.encoding = null;
 
-  req.on('response', function(res) {
+  return new Promise((resolve, reject) => {
+    const req = request(opts);
 
-    var buffer = new Buffer([]);
-    var size;
-    var imageSizeError;
+    req.on('response', res => {
+      let buffer = new Buffer([]);
+      let size;
+      let imageSizeError;
 
-    res.on('data', function(chunk) {
+      res.on('data', chunk => {
+        buffer = Buffer.concat([buffer, chunk]);
 
-      buffer = Buffer.concat([ buffer, chunk ]);
+        try {
+          size = imageSize(buffer);
+        } catch (err) {
+          imageSizeError = err;
+          return;
+        }
 
-      try {
-        size = imageSize(buffer);
-      } catch (err) {
-        imageSizeError = err;
-        return;
-      }
+        if (size) {
+          return req.abort();
+        }
+      });
 
-      if (size) {
-        return req.abort();
-      }
+      res.on('error', err => reject(err));
 
+      res.on('end', () => {
+        if (!size) {
+          return reject(imageSizeError);
+        }
+
+        size.downloaded = buffer.length;
+        return resolve(size);
+      });
     });
 
-    res.on('error', function(err) {
-      return done(err);
-    });
-
-    res.on('end', function() {
-
-      if (!size) {
-        return done(imageSizeError);
-      }
-
-      return done(null, size, buffer.length);
-
-    });
-
+    req.on('error', err => reject(err));
   });
-
-  req.on('error', function(err) {
-    return done(err);
-  });
-
 };
