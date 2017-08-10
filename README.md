@@ -2,52 +2,68 @@
 
 [![NPM](https://nodei.co/npm/request-image-size.png)](https://nodei.co/npm/request-image-size/)
 
-This NodeJS module is an extension of [http-image-size](https://github.com/jo/http-image-size) by Johannes J. Schmidt. It detects image dimensions via [request](https://github.com/mikeal/request) instead of Node.js native `http`/`https`, allowing for more flexibility and following redirects by default. Tries [image-size](https://github.com/netroy/image-size) on each chunk received until the image dimensions are obtained, and the request is aborted.
+Detects image dimensions via [request](https://github.com/request/request) instead of Node.js native `http`/`https`, allowing for options and following redirects by default. It reduces network traffic by aborting requests as soon as [image-size](https://github.com/image-size/image-size) is able to obtain the image size.
+
+Since version 2.0.0 it returns an ES6 native `Promise` that resolves with the `size` object or rejects with an `Error`. Requires Node.js v4+.
+
+If you prefer using a callback, please use version 1.3.0 instead ([docs](CHANGELOG.md))
+
+Supports all the image formats supported by [image-size](https://github.com/image-size/image-size):
+- BMP
+- CUR
+- GIF
+- ICO
+- JPEG
+- PNG
+- PSD
+- TIFF
+- WebP
+- SVG
+- DDS
+
+### Dependencies
+- [request](https://github.com/request/request)
+- [image-size](https://github.com/image-size/image-size)
 
 ## Basic usage
+
 ```js
-var requestImageSize = require('request-image-size');
+const requestImageSize = require('request-image-size');
 
-requestImageSize('http://nodejs.org/images/logo.png', function(err, size, downloaded) {
-
-  if (err) {
-    return console.error('An error has ocurred:', error);
-  }
-
-  if (!size) {
-    return console.error('Could not get image size');
-  }
-
-  console.log('Image is %dpx x %dpx, downloaded %d bytes', size.width, size.height, downloaded);
-
-});
+requestImageSize('http://nodejs.org/images/logo.png')
+.then(size => console.log(size))
+.catch(err => console.error(err));
 ```
+
+Result:
+```js
+{ width: 245, height: 66, type: 'png', downloaded: 856 }
+```
+
 
 ## Advanced usage
 
-Specifying a request `options` object ([docs](https://github.com/mikeal/request#requestoptions-callback)):
+Specifying a request `options` object ([docs](https://github.com/request/request/#requestoptions-callback)):
 
 ```js
-var requestImageSize = require('request-image-size');
+const requestImageSize = require('request-image-size');
 
-var options = {
+const options = {
   url: 'http://nodejs.org/images/logo.png',
   headers: {
     'User-Agent': 'request-image-size'
   }
 };
 
-requestImageSize(options, function(err, size, length) {
-  console.log(err, size, length);
-});
+requestImageSize(options)
+.then(size => console.log(size))
+.catch(err => console.error(err));
 ```
 
-The callback receives three arguments: `err`, `size`, `downloaded`:
-
-- `err` returns an `Error` object if anything goes wrong.
-- `size` is in the form `{ width: 245, height: 66, type: 'png' }`.
-- `downloaded` is the number of bytes downloaded before being able to extract the image size.
-
 ## License
+
 Copyright (c) 2017 Rodrigo Fernández Romero
+
 Licensed under the MIT license.
+
+Based on [http-image-size](https://github.com/jo/http-image-size) from Johannes J. Schmidt.
