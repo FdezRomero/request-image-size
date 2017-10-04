@@ -37,9 +37,7 @@ module.exports = function requestImageSize(options) {
       let imageSizeError;
       let { statusCode: code, statusMessage: msg } = res;
 
-      if(!sc.accept(res.statusCode, "2xx", "3xx")) {
-        reject({ code, msg });
-      }
+      if(!sc.accept(code, "2xx", "3xx")) reject({ code, msg });
 
       res.on('data', chunk => {
         buffer = Buffer.concat([buffer, chunk]);
