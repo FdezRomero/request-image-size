@@ -11,6 +11,7 @@
 
 const request = require('request');
 const imageSize = require('image-size');
+const sc = require("statuscode");
 
 module.exports = function requestImageSize(options) {
   let opts = {
@@ -34,6 +35,11 @@ module.exports = function requestImageSize(options) {
       let buffer = new Buffer([]);
       let size;
       let imageSizeError;
+      let { statusCode: code, statusMessage: msg } = res;
+
+      if(!sc.accept(res.statusCode, "2xx", "3xx")) {
+        reject({ code, msg });
+      }
 
       res.on('data', chunk => {
         buffer = Buffer.concat([buffer, chunk]);
