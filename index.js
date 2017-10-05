@@ -11,6 +11,7 @@
 
 const request = require('request');
 const imageSize = require('image-size');
+const HttpError = require('standard-http-error');
 
 module.exports = function requestImageSize(options) {
   let opts = {
@@ -31,6 +32,10 @@ module.exports = function requestImageSize(options) {
     const req = request(opts);
 
     req.on('response', res => {
+      if (res.statusCode >= 400) {
+        return reject(new HttpError(res.statusCode, res.statusMessage));
+      }
+
       let buffer = new Buffer([]);
       let size;
       let imageSizeError;
