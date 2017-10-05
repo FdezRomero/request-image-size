@@ -1,3 +1,8 @@
+<a name="2.1.0"></a>
+# 2.1.0 (2017-10-05)
+
+- Minor change: Better error handling by returning an error of type `HttpError` if the response status code is 4xx/5xx, instead of the generic `TypeError: unsupported file type: undefined (file: undefined)` passed by `image-size`. Fixes #8, thanks to @Arturszott and @dustingraves for their contribution.
+
 <a name="2.0.0"></a>
 # 2.0.0 (2017-08-10)
 
