@@ -24,6 +24,7 @@ Supports all the image formats supported by [image-size](https://github.com/imag
 ### Dependencies
 - [request](https://github.com/request/request)
 - [image-size](https://github.com/image-size/image-size)
+- [standard-http-error](https://github.com/moll/js-standard-http-error)
 
 ## Basic usage
 
