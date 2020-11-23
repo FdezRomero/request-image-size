@@ -42,10 +42,10 @@
   },
   "dependencies": {
     "image-size": "^0.9.3",
-    "request": "^2.54.0",
+    "request": "^2.88.2",
     "standard-http-error": "^2.0.1"
   },
   "devDependencies": {
-    "eslint-config-savelist": "^1.1.1"
+    "eslint-config-savelist": "^1.2.3"
   }
 }
