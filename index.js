@@ -47,7 +47,7 @@ module.exports = function requestImageSize(options) {
           size = imageSize(buffer);
         } catch (err) {
           imageSizeError = err;
-          return;
+          return req.abort();
         }
 
         if (size) {
