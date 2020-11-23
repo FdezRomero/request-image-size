@@ -23,7 +23,11 @@ module.exports = function requestImageSize(options) {
   } else if (options && typeof options === 'string') {
     opts = Object.assign({ uri: options }, opts);
   } else {
-    return Promise.reject(new Error('You should provide an URI string or a "request" options object.'));
+    return Promise.reject(
+      new Error(
+        'You should provide an URI string or a "request" options object.'
+      )
+    );
   }
 
   opts.encoding = null;
@@ -36,7 +40,7 @@ module.exports = function requestImageSize(options) {
         return reject(new HttpError(res.statusCode, res.statusMessage));
       }
 
-      let buffer = new Buffer([]);
+      let buffer = Buffer.from([]);
       let size;
       let imageSizeError;
 
