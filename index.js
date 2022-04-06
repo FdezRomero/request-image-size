@@ -50,8 +50,10 @@ module.exports = function requestImageSize(options) {
         try {
           size = imageSize(buffer);
         } catch (err) {
-          imageSizeError = err;
-          return req.abort();
+          if (!err.message.includes('exceeded buffer limits')) {
+            imageSizeError = err;
+            return req.abort();
+          }
         }
 
         if (size) {
